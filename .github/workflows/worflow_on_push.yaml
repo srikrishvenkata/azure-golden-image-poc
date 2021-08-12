@@ -2,8 +2,6 @@ name: HelloGitAction
 
 on: push  
 
-env:
-  PR_NUMBER: ${{ github.event.pull_request.number }}
 jobs:
   HelloWorld:
     runs-on: [ubuntu-latest]
