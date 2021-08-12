@@ -1,0 +1,37 @@
+name: HelloGitAction
+
+on: push  
+
+env:
+  PR_NUMBER: ${{ github.event.pull_request.number }}
+jobs:
+  HelloWorld:
+    runs-on: [ubuntu-latest]
+    strategy:
+      matrix:
+        packer:
+          - lnxjh
+      fail-fast: false
+    steps:
+      - name: Clean up runner
+        run: |
+          rm -f ~/.ssh/*
+          rm -f ~/.gitconfig
+        continue-on-error: true
+      - name: Clean Workspace
+        uses: AutoModality/action-clean@d004b47eb728f2a83316fc70ba9a62ef97278013 # v1.1.0
+      - name: Checkout Repository
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # v2.3.4
+      - name: Validate Tools
+        run: |
+          packer --version
+      - name: PrintEnv
+        run: |
+          printenv
+      - name: Packer Validate
+        run: |
+          if [ -f "packer/${{ matrix.packer }}/${{ matrix.packer }}.json" ]; then
+            packer validate -syntax-only packer/${{ matrix.packer }}/${{ matrix.packer }}.json
+          else
+            echo No "packer/${{ matrix.packer }}/${{ matrix.packer }}.json" found.
+          fi      
